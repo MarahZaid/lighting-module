@@ -24,11 +24,11 @@
 #define ROOM_ID             "Room101"
 
 // ─── Hardware Pins ────────────────────────────────
-#define PIR_PIN             13
+#define PIR_PIN             34
 #define RADAR_PIN           27
-#define PWM_PIN             2
-#define RELAY1_PIN          26   // ضو أمامي
-#define RELAY2_PIN          33   // ضو خلفي
+#define PWM_PIN             32
+#define RELAY1_PIN          33   // ضو أمامي
+#define RELAY2_PIN          26   // ضو خلفي
 
 // ─── PWM Settings ────────────────────────────────
 #define PWM_FREQ            500

@@ -39,6 +39,7 @@ static void onMessage(char* topic, byte* payload, unsigned int length) {
   // إطفاء كامل
   if (doc.containsKey("allOff") && doc["allOff"].as<bool>())
     setAllOff();
+    
 }
 
 // ─── إعادة الاتصال ────────────────────────────────

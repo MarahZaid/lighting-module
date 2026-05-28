@@ -20,8 +20,8 @@ void initLighting() {
   pinMode(RELAY1_PIN, OUTPUT);
   pinMode(RELAY2_PIN, OUTPUT);
 
-  digitalWrite(RELAY1_PIN, LOW);
-  digitalWrite(RELAY2_PIN, LOW);
+  digitalWrite(RELAY1_PIN, HIGH);
+  digitalWrite(RELAY2_PIN, HIGH);
 
   ledcSetup(0, PWM_FREQ, PWM_RESOLUTION);
   ledcAttachPin(PWM_PIN, 0);
@@ -53,15 +53,15 @@ static void smoothPWM(int target) {
 // ─── تشغيل/إطفاء الريليهات ───────────────────────
 static void applyRelay1(bool on) {
   relay1State = on;
-  digitalWrite(RELAY1_PIN, on ? HIGH : LOW);
+  digitalWrite(RELAY1_PIN, on ? LOW : HIGH);
 }
 
 static void applyRelay2(bool on) {
   relay2State = on;
-  digitalWrite(RELAY2_PIN, on ? HIGH : LOW);
+  digitalWrite(RELAY2_PIN, on ? LOW : HIGH);
 }
 
-// ─── قراءة الـ Sensors ───────────────────────────
+// ─── قراءة الـ Sensors ───────────────────────────+
 void readSensors() {
   bool pir   = digitalRead(PIR_PIN)   == HIGH;
   bool radar = digitalRead(RADAR_PIN) == HIGH;
