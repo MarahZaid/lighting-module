@@ -40,6 +40,7 @@ static void onMessage(char* topic, byte* payload, unsigned int length) {
   if (doc.containsKey("allOff") && doc["allOff"].as<bool>())
     setAllOff();
 
+
   // سلايدر Projector Mode
   if (doc.containsKey("projector_brightness"))
     setProjectorBrightness(doc["projector_brightness"].as<int>());
