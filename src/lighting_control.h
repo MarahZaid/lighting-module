@@ -13,6 +13,8 @@ void setRelay1(bool on);
 void setRelay2(bool on);
 void setBrightness(int percent);  // 0-100
 void setAllOff();
+void setProjectorBrightness(int percent);  // 0-100, للسلايدر
+
 
 // Getters
 LightMode getCurrentMode();
@@ -21,3 +23,4 @@ bool      getRelay2State();
 int       getBrightnessPercent();
 float     getLux();
 bool      isPersonDetected();
+int  getProjectorBrightnessPercent();

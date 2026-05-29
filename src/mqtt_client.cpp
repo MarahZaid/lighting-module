@@ -39,6 +39,11 @@ static void onMessage(char* topic, byte* payload, unsigned int length) {
   // إطفاء كامل
   if (doc.containsKey("allOff") && doc["allOff"].as<bool>())
     setAllOff();
+
+  // سلايدر Projector Mode
+  if (doc.containsKey("projector_brightness"))
+    setProjectorBrightness(doc["projector_brightness"].as<int>());
+    
 }
 
 // ─── إعادة الاتصال ────────────────────────────────
@@ -86,6 +91,7 @@ void sendLightingData() {
   doc["status"]     = (getRelay1State() || getRelay2State() ||
                        getBrightnessPercent() > 0) ? "on" : "off";
   doc["occupied"]   = isPersonDetected();
+  doc["projector_brightness"] = getProjectorBrightnessPercent();
 
   String msg;
   serializeJson(doc, msg);

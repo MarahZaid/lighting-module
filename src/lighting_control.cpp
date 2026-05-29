@@ -12,6 +12,7 @@ static int       currentPWM       = 0;
 static float     currentLux       = 0;
 static bool      personDetected   = false;
 static unsigned long lastMotionTime = 0;
+static int projectorBrightness = 20;  // قيمة افتراضية 20%
 
 // ─── تهيئة ───────────────────────────────────────
 void initLighting() {
@@ -20,8 +21,8 @@ void initLighting() {
   pinMode(RELAY1_PIN, OUTPUT);
   pinMode(RELAY2_PIN, OUTPUT);
 
-  digitalWrite(RELAY1_PIN, LOW);
-  digitalWrite(RELAY2_PIN, LOW);
+  digitalWrite(RELAY1_PIN, HIGH);
+  digitalWrite(RELAY2_PIN, HIGH);
 
   ledcSetup(0, PWM_FREQ, PWM_RESOLUTION);
   ledcAttachPin(PWM_PIN, 0);
@@ -53,15 +54,15 @@ static void smoothPWM(int target) {
 // ─── تشغيل/إطفاء الريليهات ───────────────────────
 static void applyRelay1(bool on) {
   relay1State = on;
-  digitalWrite(RELAY1_PIN, on ? HIGH : LOW);
+  digitalWrite(RELAY1_PIN, on ? LOW : HIGH);
 }
 
 static void applyRelay2(bool on) {
   relay2State = on;
-  digitalWrite(RELAY2_PIN, on ? HIGH : LOW);
+  digitalWrite(RELAY2_PIN, on ? LOW : HIGH);
 }
 
-// ─── قراءة الـ Sensors ───────────────────────────
+// ─── قراءة الـ Sensors ───────────────────────────+
 void readSensors() {
   bool pir   = digitalRead(PIR_PIN)   == HIGH;
   bool radar = digitalRead(RADAR_PIN) == HIGH;
@@ -80,7 +81,8 @@ void applyLightingControl() {
     // أطفي الأضواء الرئيسية وخفف الـ dimmer
     applyRelay1(false);
     applyRelay2(false);
-    smoothPWM(PROJECTOR_BRIGHTNESS);
+    int projPWM = map(constrain(projectorBrightness, 0, 100), 0, 100, 0, 255);
+    smoothPWM(projPWM);
     return;
   }
 
@@ -99,10 +101,7 @@ void applyLightingControl() {
     applyRelay2(true);
 
     // ضبط الـ dimmer حسب الضوء الطبيعي
-    int targetPercent = map((int)currentLux, 0, LUX_MAX, 100, 0);
-    targetPercent = constrain(targetPercent, 0, 100);
-    int targetPWM = map(targetPercent, 0, 100, 0, 255);
-    smoothPWM(targetPWM);
+    smoothPWM(0);
   }
 }
 
@@ -140,10 +139,23 @@ void setAllOff() {
   Serial.println("All lights OFF");
 }
 
+void setProjectorBrightness(int percent) {
+  projectorBrightness = constrain(percent, 0, 100);
+  Serial.print("Projector Brightness: ");
+  Serial.println(projectorBrightness);
+  // إذا الوضع الحالي projector، طبق التغيير فوراً
+  if (currentMode == MODE_PROJECTOR) {
+    int pwm = map(projectorBrightness, 0, 100, 0, 255);
+    smoothPWM(pwm);
+  }
+}
+
+
 // ─── Getters ─────────────────────────────────────
-LightMode getCurrentMode()     { return currentMode;    }
-bool      getRelay1State()     { return relay1State;    }
-bool      getRelay2State()     { return relay2State;    }
-int       getBrightnessPercent(){ return map(currentPWM, 0, 255, 0, 100); }
-float     getLux()             { return currentLux;     }
-bool      isPersonDetected()   { return personDetected; }
+LightMode getCurrentMode()          { return currentMode;    }
+bool      getRelay1State()          { return relay1State;    }
+bool      getRelay2State()          { return relay2State;    }
+int       getBrightnessPercent()    { return map(currentPWM, 0, 255, 0, 100); }
+float     getLux()                  { return currentLux;     }
+bool      isPersonDetected()        { return personDetected; }
+int       getProjectorBrightnessPercent() { return projectorBrightness; }
